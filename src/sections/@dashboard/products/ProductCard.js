@@ -12,10 +12,20 @@ import {
   DialogTitle,
   Dialog,
   Button,
+  ListItemText,
+  Avatar,
+  ListItemAvatar,
+  IconButton,
+  ListItem,
+  List,
+  Grid,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+
 // utils
+import React from 'react';
 import { fCurrency } from '../../../utils/formatNumber';
+import Iconify from '../../../components/iconify';
 // components
 import Label from '../../../components/label';
 import { ColorPreview } from '../../../components/color-utils';
@@ -38,8 +48,15 @@ ShopProductCard.propTypes = {
 
 export default function ShopProductCard({ product, open, handleClickOpen, handleClose }) {
   // const { name, cover, price, colors, status, priceSale } = product;
+  const [dense, setDense] = React.useState(false);
   const { name, cover, tasks, status } = product;
-
+  function generate(element) {
+    return [0, 1, 2].map((value) =>
+      React.cloneElement(element, {
+        key: value,
+      })
+    );
+  }
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -112,6 +129,28 @@ export default function ShopProductCard({ product, open, handleClickOpen, handle
             Let Google help apps determine location. This means sending anonymous location data to Google, even when no
             apps are running.
           </DialogContentText>
+          <Grid item xs={12} md={6}>
+            <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
+              Avatar with text and icon
+            </Typography>
+
+            <List dense={dense}>
+              {generate(
+                <ListItem
+                  secondaryAction={
+                    <IconButton edge="end" aria-label="delete">
+                      <Iconify icon="delete " />
+                    </IconButton>
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar>{/* <Delete /> */}</Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary="Single-line item" />
+                </ListItem>
+              )}
+            </List>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Disagree</Button>

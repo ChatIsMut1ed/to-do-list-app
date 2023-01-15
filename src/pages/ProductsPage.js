@@ -30,10 +30,10 @@ export default function ProductsPage() {
       ],
       cover: '/assets/images/products/product_1.jpg',
       id: 'ea4801ff-d832-459e-a249-00c6e0f20fda',
-      name: 'Nike Air Force 1 NDESTRUKT',
+      name: 'List 1',
       // due_date: 42.21,
       // priceSale: 55,
-      status: 'new',
+      status: 'Pending',
     },
     {
       tasks: [
@@ -43,10 +43,10 @@ export default function ProductsPage() {
       ],
       cover: '/assets/images/products/product_11.jpg',
       id: 'ea4801ff-d832-459e-a249-00c6e0f20f55',
-      name: 'Nike Air Force 1 NDESTRUKT',
+      name: 'List 2',
       // price: 42.21,
       // priceSale: 10,
-      status: 'sale',
+      status: 'Complete',
     },
   ];
   const addFormInputList = [
@@ -113,7 +113,8 @@ export default function ProductsPage() {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    // setOpen(true);
+    window.location.href='/dashboard/task';
   };
 
   const handleClose = () => {
@@ -129,7 +130,7 @@ export default function ProductsPage() {
             mb: 5,
           }}
         >
-          Tasks
+          Task List
         </Typography>
         <Stack
           direction="row"
@@ -142,7 +143,7 @@ export default function ProductsPage() {
         >
           <FormDialog
             action={'add'}
-            title={'Add Task'}
+            title={'Add Task List'}
             formInputList={addFormInputList}
             handleChange={handleFormChange}
             handleSubmit={handleSubmit}

@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { InputLabel, MenuItem, Select } from '@mui/material';
 import Iconify from '../iconify';
 
-export default function FormDialog({ action, title, formInputList, handleChange, handleSubmit, form }) {
+export default function FormDialog({ small, action, title, formInputList, handleChange, handleSubmit, form }) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -25,13 +25,22 @@ export default function FormDialog({ action, title, formInputList, handleChange,
       {/* <Button variant="outlined" onClick={handleClickOpen}>
         Open form dialog
       </Button> */}
-      <Button
-        variant="contained"
-        startIcon={action === 'add' ? <Iconify icon="eva:plus-fill" /> : <Iconify icon="eva:plus-fill" />}
-        onClick={handleClickOpen}
-      >
-        {title}
-      </Button>
+      {small ? (
+        <>
+          <Iconify icon={'eva:edit-fill'} onClick={handleClickOpen} sx={{ mr: 2 }} />
+          {title}
+        </>
+      ) : (
+        <>
+          <Button
+            variant="contained"
+            startIcon={action === 'add' ? <Iconify icon="eva:plus-fill" /> : <Iconify icon="eva:plus-fill" />}
+            onClick={handleClickOpen}
+          >
+            {title}
+          </Button>
+        </>
+      )}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Task</DialogTitle>
         <DialogContent>

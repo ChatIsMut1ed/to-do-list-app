@@ -23,6 +23,7 @@ import {
   TablePagination,
 } from '@mui/material';
 // components
+import FormDialog from '../components/formDialog/FormDialog';
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -146,20 +147,83 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
+    const addFormInputList = [
+    {
+      key: 'name1',
+      title: 'name',
+      label: 'Name',
+      type: 'text',
+    },
+    {
+      key: 'description1',
+      title: 'description',
+      label: 'Description',
+      type: 'text',
+    },
+    {
+      key: 'due_date1',
+      title: 'due_date',
+      label: 'Due date',
+      type: 'datetime-local',
+    },
+    {
+      key: 'status1',
+      title: 'status',
+      label: 'Status',
+      type: 'select',
+      list: ['Select', 'In Progress', 'Completed', 'Pending'],
+    },
+    {
+      key: 'task_list_id1',
+      title: 'task_list_id',
+      label: 'Task list',
+      type: 'node',
+      node: 'task_list',
+    },
+    // { title: 'user_id', label:'user_id',type: 'select', node:'users'},
+  ];
+
+  const [form, setForm] = useState({
+    name: '',
+    description: '',
+    due_date: '',
+    status: 'Select',
+    task_list_id: '',
+    user_id: 1,
+  });
+
+  const handleFormChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      console.log(form);
+      console.log('success');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title> User | Minimal UI </title>
-      </Helmet>
+      </Helmet> */}
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
             User
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New User
-          </Button>
+          </Button> */}
+          
         </Stack>
 
         <Card>
@@ -280,8 +344,17 @@ export default function UserPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+         <FormDialog
+            action={'add'}
+            title={'Edit'}
+            formInputList={addFormInputList}
+            handleChange={handleFormChange}
+            handleSubmit={handleSubmit}
+            form={form}
+            small={'true'}
+          />
+          {/* <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} /> */}
+          {/* Edit */}
         </MenuItem>
 
         <MenuItem sx={{ color: 'error.main' }}>
