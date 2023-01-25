@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import React, { useState } from 'react';
 // @mui
 import {
   Card,
@@ -21,9 +21,11 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 // components
-import { useUsers } from '../hooks/api/users.api';
+import { useUpdateUser, useUsers } from '../hooks/api/users.api';
 import FormDialog from '../components/formDialog/FormDialog';
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -76,11 +78,13 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function UserPage() {
+  const updateUserQuery = useUpdateUser();
   const [open, setOpen] = useState(null);
   const usersQuery = useUsers();
   const usersDetails = usersQuery?.data?.result;
 
   const [page, setPage] = useState(0);
+  const [openToast, setOpenToast] = useState(false);
 
   const [order, setOrder] = useState('asc');
 
@@ -92,8 +96,25 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event, data) => {
     setOpen(event.currentTarget);
+    setAddFormInputList([
+      {
+        key: 'name1',
+        title: 'name',
+        label: 'Name',
+        type: 'text',
+        value: data?.name,
+      },
+      {
+        key: 'email1',
+        title: 'email',
+        label: 'Email',
+        type: 'text',
+        value: data?.email,
+      },
+    ]);
+    setForm({ ...form, user_id: data?.id });
   };
 
   const handleCloseMenu = () => {
@@ -150,50 +171,29 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  const addFormInputList = [
+  const [addFormInputList, setAddFormInputList] = useState([
     {
       key: 'name1',
       title: 'name',
       label: 'Name',
       type: 'text',
+      value: 'test',
     },
     {
-      key: 'description1',
-      title: 'description',
-      label: 'Description',
+      key: 'email1',
+      title: 'email',
+      label: 'Email',
       type: 'text',
+      value: 'test',
     },
-    {
-      key: 'due_date1',
-      title: 'due_date',
-      label: 'Due date',
-      type: 'datetime-local',
-    },
-    {
-      key: 'status1',
-      title: 'status',
-      label: 'Status',
-      type: 'select',
-      list: ['Select', 'In Progress', 'Completed', 'Pending'],
-    },
-    {
-      key: 'task_list_id1',
-      title: 'task_list_id',
-      label: 'Task list',
-      type: 'node',
-      node: 'task_list',
-    },
-    // { title: 'user_id', label:'user_id',type: 'select', node:'users'},
-  ];
+  ]);
 
   const [form, setForm] = useState({
     name: '',
-    description: '',
-    due_date: '',
-    status: 'Select',
-    task_list_id: '',
-    user_id: 1,
+    email: '',
+    user_id: null,
   });
+  const [openToastWarning, setOpenToastWarning] = React.useState(false);
 
   const handleFormChange = (e) => {
     setForm({
@@ -204,8 +204,10 @@ export default function UserPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(form);
-      console.log('success');
+      updateUserQuery
+        .mutateAsync(form)
+        .then(() => setOpenToast(true))
+        .catch(() => setOpenToastWarning(true));
     } catch (error) {
       console.log(error);
     }
@@ -216,7 +218,16 @@ export default function UserPage() {
       {/* <Helmet>
         <title> User | Minimal UI </title>
       </Helmet> */}
-
+      <Snackbar open={openToast} autoHideDuration={6000} onClose={() => setOpenToast(false)}>
+        <Alert onClose={() => setOpenToast(false)} severity="success" sx={{ width: '100%' }}>
+          {'Success'}
+        </Alert>
+      </Snackbar>
+      <Snackbar open={openToastWarning} autoHideDuration={6000} onClose={() => setOpenToastWarning(false)}>
+        <Alert onClose={() => setOpenToastWarning(false)} severity="warning" sx={{ width: '100%' }}>
+          Check the entred data
+        </Alert>
+      </Snackbar>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
@@ -266,16 +277,16 @@ export default function UserPage() {
 
                           <TableCell align="left">{role}</TableCell>
 
-                          {/* <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell> */}
+                          {/* <TableCell align="left">{row?.email_verified_at ? 'Yes' : 'No'}</TableCell> */}
 
                           <TableCell align="left">
-                            <Label color={('role' === 'banned' && 'error') || 'success'}>
-                              {sentenceCase('Active')}
+                            <Label color={(!row?.email_verified_at && 'error') || 'success'}>
+                              {row?.email_verified_at ? sentenceCase('active') : sentenceCase('not active')}
                             </Label>
                           </TableCell>
 
                           <TableCell align="right">
-                            <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                            <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>
                               <Iconify icon={'eva:more-vertical-fill'} />
                             </IconButton>
                           </TableCell>
@@ -346,24 +357,24 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <FormDialog
-            action={'add'}
-            title={'Edit'}
-            formInputList={addFormInputList}
-            handleChange={handleFormChange}
-            handleSubmit={handleSubmit}
-            form={form}
-            // small={'true'}
-          />
-          {/* <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} /> */}
-          {/* Edit */}
-        </MenuItem>
+        {/* <MenuItem> */}
+        <FormDialog
+          action={'add'}
+          title={'Edit'}
+          formInputList={addFormInputList}
+          handleChange={handleFormChange}
+          handleSubmit={handleSubmit}
+          form={form}
+          small={'true'}
+        />
+        {/* <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} /> */}
+        {/* Edit */}
+        {/* </MenuItem> */}
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        {/* <MenuItem sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </Popover>
     </>
   );

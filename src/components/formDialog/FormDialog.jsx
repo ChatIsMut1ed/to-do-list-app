@@ -26,10 +26,10 @@ export default function FormDialog({ small, action, title, formInputList, handle
         Open form dialog
       </Button> */}
       {small ? (
-        <>
-          <Iconify icon={'eva:edit-fill'} onClick={handleClickOpen} sx={{ mr: 2 }} />
+        <Button onClick={handleClickOpen} fullWidth>
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           {title}
-        </>
+        </Button>
       ) : (
         <>
           <Button

@@ -12,8 +12,15 @@ const createUser = async (values) => {
   return parsed.data;
 };
 
+const updateUser = async (values) => {
+  const parsed = await axiosClient.put(`users/${values.user_id}`, values);
+  return parsed.data;
+};
+
 const useCreateUser = () => useMutation(['create-user'], (values) => createUser(values));
+
+const useUpdateUser = () => useMutation(['update-user'], (values) => updateUser(values));
 
 const useUsers = () => useQuery(['users'], () => fetchUsers());
 
-export { useCreateUser, useUsers };
+export { useCreateUser, useUsers, useUpdateUser };
