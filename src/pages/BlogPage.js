@@ -1,8 +1,12 @@
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Grid, Button, Container, Stack, Typography, Snackbar, Alert } from '@mui/material';
 // components
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import DialogDescription from '../components/DialogDescription/DialogDescription';
+import { useCreateTask } from '../hooks/api/tasks.api';
+import { useDeleteTasksList, useTasksByList } from '../hooks/api/task.lists.api';
 import FormDialog from '../components/formDialog/FormDialog';
 import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
@@ -15,61 +19,70 @@ const SORT_OPTIONS = [
   // { value: 'latest', label: 'Latest' },
   // { value: 'popular', label: 'Popular' },
   // { value: 'oldest', label: 'Oldest' },
-    { value: 'complete', label: 'Complete' },
+  { value: 'complete', label: 'Complete' },
   { value: 'In Progress', label: 'In Progress' },
-  { value: 'Pending', label: 'Pending' }
+  { value: 'Pending', label: 'Pending' },
 ];
 
 const tasksList1 = [
-    {
-      id: 'qsdqd1321',
-      cover: `/assets/images/covers/cover_1.jpg`,
-      title: 'task1',
-      createdAt: '02/02/2023',
-      view: '200',
-      comment: '213',
-      share: '500',
-      favorite: '500',
-      author: {
-        name: 'user1',
-        avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-      },
+  {
+    id: 'qsdqd1321',
+    cover: `/assets/images/covers/cover_1.jpg`,
+    title: 'task1',
+    createdAt: '02/02/2023',
+    view: '200',
+    comment: '213',
+    share: '500',
+    favorite: '500',
+    author: {
+      name: 'user1',
+      avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
     },
-    {
-      id: 'qsdqd132',
-      cover: `/assets/images/covers/cover_1.jpg`,
-      title: 'task2',
-      createdAt: '02/02/2023',
-      view: '200',
-      comment: '213',
-      share: '500',
-      favorite: '500',
-      author: {
-        name: 'user1',
-        avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-      },
+  },
+  {
+    id: 'qsdqd132',
+    cover: `/assets/images/covers/cover_1.jpg`,
+    title: 'task2',
+    createdAt: '02/02/2023',
+    view: '200',
+    comment: '213',
+    share: '500',
+    favorite: '500',
+    author: {
+      name: 'user1',
+      avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
     },
-    {
-      id: 'qsdqd1323',
-      cover: `/assets/images/covers/cover_1.jpg`,
-      title: 'task3',
-      createdAt: '02/02/2023',
-      view: '200',
-      comment: '213',
-      share: '500',
-      favorite: '500',
-      author: {
-        name: 'user1',
-        avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-      },
+  },
+  {
+    id: 'qsdqd1323',
+    cover: `/assets/images/covers/cover_1.jpg`,
+    title: 'task3',
+    createdAt: '02/02/2023',
+    view: '200',
+    comment: '213',
+    share: '500',
+    favorite: '500',
+    author: {
+      name: 'user1',
+      avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
     },
-  ];
+  },
+];
 
 // ----------------------------------------------------------------------
 
 export default function BlogPage() {
+  const [openToast, setOpenToast] = React.useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-    const addFormInputList = [
+  const tasksByListQuery = useTasksByList(id);
+  const deleteTasksListQuery = useDeleteTasksList();
+  const tasksByListDetails = tasksByListQuery?.data?.result;
+
+  const createTask = useCreateTask();
+
+  const addFormInputList = [
     {
       key: 'name1',
       title: 'name',
@@ -93,15 +106,9 @@ export default function BlogPage() {
       title: 'status',
       label: 'Status',
       type: 'select',
-      list: ['Select', 'In Progress', 'Completed', 'Pending'],
+      list: ['Select', 'completed', 'pending'],
     },
-    {
-      key: 'task_list_id1',
-      title: 'task_list_id',
-      label: 'Task list',
-      type: 'node',
-      node: 'task_list',
-    },
+
     // { title: 'user_id', label:'user_id',type: 'select', node:'users'},
   ];
 
@@ -110,8 +117,7 @@ export default function BlogPage() {
     description: '',
     due_date: '',
     status: 'Select',
-    task_list_id: '',
-    user_id: 1,
+    task_list_id: id,
   });
 
   const handleFormChange = (e) => {
@@ -123,8 +129,18 @@ export default function BlogPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(form);
-      console.log('success');
+      createTask.mutateAsync(form);
+      setOpenToast(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      deleteTasksListQuery.mutateAsync(id);
+      setOpenToast(true);
+      navigate('/dashboard/task-list');
     } catch (error) {
       console.log(error);
     }
@@ -132,10 +148,15 @@ export default function BlogPage() {
 
   return (
     <>
+      <Snackbar open={openToast} autoHideDuration={6000} onClose={() => setOpenToast(false)}>
+        <Alert onClose={() => setOpenToast(false)} severity="success" sx={{ width: '100%' }}>
+          Success
+        </Alert>
+      </Snackbar>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            List 1
+            List {id}
           </Typography>
           {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New Post
@@ -148,6 +169,15 @@ export default function BlogPage() {
             handleSubmit={handleSubmit}
             form={form}
           />
+          <Button
+            variant="contained"
+            style={{
+              backgroundColor: 'red',
+            }}
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
         </Stack>
 
         <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
@@ -155,12 +185,9 @@ export default function BlogPage() {
           <BlogPostsSort options={SORT_OPTIONS} />
         </Stack>
 
-  
-
         <Grid container spacing={3}>
-          {tasksList1.map((post, index) => (
-            <BlogPostCard key={post.id} post={post} index={index} />
-          ))}
+          {tasksByListDetails &&
+            tasksByListDetails.map((post, index) => <BlogPostCard key={post.id} post={post} index={index} />)}
         </Grid>
       </Container>
     </>

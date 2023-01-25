@@ -1,9 +1,13 @@
 import PropTypes from 'prop-types';
 // @mui
+import React, { useEffect, useState } from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import { Box, Link, Card, Grid, Avatar, Typography, CardContent } from '@mui/material';
+import DialogDescription from '../../../components/DialogDescription/DialogDescription';
+import { useEditTask } from '../../../hooks/api/tasks.api';
 // utils
 import { fDate } from '../../../utils/formatTime';
+import FormDialog from '../../../components/formDialog/FormDialog';
 import { fShortenNumber } from '../../../utils/formatNumber';
 //
 import SvgColor from '../../../components/svg-color';
@@ -16,7 +20,7 @@ const StyledCardMedia = styled('div')({
   paddingTop: 'calc(100% * 3 / 4)',
 });
 
-const StyledTitle = styled(Link)({
+const Styledname = styled(Link)({
   height: 44,
   overflow: 'hidden',
   WebkitLineClamp: 2,
@@ -57,9 +61,14 @@ BlogPostCard.propTypes = {
 };
 
 export default function BlogPostCard({ post, index }) {
-  const { cover, title, view, comment, share, author, createdAt } = post;
+  const [openToast, setOpenToast] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+
+  const { cover, name, view, comment, share, author, createdAt, status, id } = post;
   const latestPostLarge = index === 0;
   const latestPost = index === 1 || index === 2;
+
+  const editTaskQuery = useEditTask();
 
   const POST_INFO = [
     { number: comment, icon: 'eva:message-circle-fill' },
@@ -67,31 +76,99 @@ export default function BlogPostCard({ post, index }) {
     { number: share, icon: 'eva:share-fill' },
   ];
 
+  const editFormInputList = [
+    {
+      key: 'name1',
+      title: 'name',
+      label: 'Name',
+      type: 'text',
+      value: name,
+    },
+    {
+      key: 'description1',
+      title: 'description',
+      label: 'Description',
+      type: 'text',
+      value: post?.description,
+    },
+    {
+      key: 'due_date1',
+      title: 'due_date',
+      label: 'Due date',
+      type: 'datetime-local',
+      value: post?.due_date,
+    },
+    {
+      key: 'status1',
+      title: 'status',
+      label: 'Status',
+      type: 'select',
+      value: status,
+      list: ['Select', 'completed', 'pending'],
+    },
+  ];
+
+  const [form, setForm] = useState({
+    task_id: id,
+    name: '',
+    description: '',
+    due_date: '',
+    status: 'Select',
+  });
+
+  const handleFormChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      editTaskQuery.mutateAsync(form);
+      console.log(form);
+      setOpenToast(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    setForm({
+      task_id: id,
+      name: post?.name,
+      description: post?.description,
+      due_date: post?.due_date,
+      status: post?.status,
+    });
+  }, [post]);
+
   return (
     <Grid item xs={12} sm={latestPostLarge ? 3 : 3} md={latestPostLarge ? 3 : 3}>
+      <DialogDescription open={open} setOpen={setOpen} data={post} />
+
       <Card sx={{ position: 'relative' }}>
         <StyledCardMedia
-          sx={
-            {
-              // ...((latestPostLarge || latestPost) && {
-              //   pt: 'calc(100% * 4 / 3)',
-              //   '&:after': {
-              //     top: 0,
-              //     content: "''",
-              //     width: '100%',
-              //     height: '100%',
-              //     position: 'absolute',
-              //     // bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
-              //   },
-              // }),
-              // ...(latestPostLarge && {
-              //   pt: {
-              //     xs: 'calc(100% * 4 / 3)',
-              //     sm: 'calc(100% * 3 / 4.66)',
-              //   },
-              // }),
-            }
-          }
+          onClick={() => setOpen(true)}
+          sx={{
+            cursor: 'pointer',
+            // ...((latestPostLarge || latestPost) && {
+            //   pt: 'calc(100% * 4 / 3)',
+            //   '&:after': {
+            //     top: 0,
+            //     content: "''",
+            //     width: '100%',
+            //     height: '100%',
+            //     position: 'absolute',
+            //     // bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+            //   },
+            // }),
+            // ...(latestPostLarge && {
+            //   pt: {
+            //     xs: 'calc(100% * 4 / 3)',
+            //     sm: 'calc(100% * 3 / 4.66)',
+            //   },
+            // }),
+          }}
         >
           <SvgColor
             color="paper"
@@ -122,7 +199,7 @@ export default function BlogPostCard({ post, index }) {
             }
           /> */}
 
-          <StyledCover alt={title} src={cover} />
+          <StyledCover alt={name} src={cover ?? 'https://cdn-icons-png.flaticon.com/512/9409/9409753.png'} />
         </StyledCardMedia>
 
         <CardContent
@@ -136,12 +213,12 @@ export default function BlogPostCard({ post, index }) {
           }}
         >
           <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
-            {fDate(createdAt)}
+            {fDate(post?.due_date)}
           </Typography>
 
-          <StyledTitle
+          <Styledname
             color="inherit"
-            variant="subtitle2"
+            variant="subname2"
             underline="hover"
             sx={
               {
@@ -152,27 +229,40 @@ export default function BlogPostCard({ post, index }) {
               }
             }
           >
-            {title}
-          </StyledTitle>
+            {name}
+          </Styledname>
 
-          <StyledInfo>
+          <StyledInfo
+            style={{
+              justifyContent: 'space-between',
+            }}
+          >
             {/* {POST_INFO.map((info, index) => ( */}
-              <Box
-                key={index}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  // ml: index === 0 ? 0 : 1.5,
-                  ml: 1.5,
-                  // ...((latestPostLarge || latestPost) && {
-                  //   color: 'grey.500',
-                  // }),
-                }}
-              >
-                <Iconify icon={'eva:eye-fill'} sx={{ width: 16, height: 16, mr: 0.5 }} />
-                {/* <Typography variant="caption">{fShortenNumber(50000)}</Typography> */}
-                <Typography variant="caption">STATUS: Complete</Typography>
-              </Box>
+            <FormDialog
+              action={'edit'}
+              title={'Edit'}
+              formInputList={editFormInputList}
+              handleChange={handleFormChange}
+              handleSubmit={handleSubmit}
+              form={form}
+            />
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                // ml: index === 0 ? 0 : 1.5,
+                ml: 1.5,
+                // ...((latestPostLarge || latestPost) && {
+                //   color: 'grey.500',
+                // }),
+              }}
+            >
+              <Iconify icon={'eva:eye-fill'} sx={{ width: 16, height: 16, mr: 0.5 }} />
+              {/* <Typography variant="caption">{fShortenNumber(50000)}</Typography> */}
+
+              <Typography variant="caption">{status}</Typography>
+            </Box>
             {/* ))} */}
           </StyledInfo>
         </CardContent>

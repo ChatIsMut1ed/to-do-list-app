@@ -19,7 +19,7 @@ export default function ColorPreview({ colors, limit = 3, sx }) {
   return (
     <Stack component="span" direction="row" alignItems="center" justifyContent="flex-end" sx={sx}>
       {showColor.map((color, index) =>
-        color?.status === 'Pending' ? (
+        color?.status === 'pending' ? (
           <Box
             key={color + index}
             sx={{
@@ -29,7 +29,7 @@ export default function ColorPreview({ colors, limit = 3, sx }) {
               borderRadius: '50%',
               border: (theme) => `solid 2px ${theme.palette.background.paper}`,
               boxShadow: (theme) => `inset -1px 1px 2px ${alpha(theme.palette.common.black, 0.24)}`,
-              bgcolor: '#ff0b0b',
+              bgcolor: '#ff780b',
             }}
           />
         ) : color?.status === 'In Progress' ? (

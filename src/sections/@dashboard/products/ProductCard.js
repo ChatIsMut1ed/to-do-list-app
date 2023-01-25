@@ -49,7 +49,7 @@ ShopProductCard.propTypes = {
 export default function ShopProductCard({ product, open, handleClickOpen, handleClose }) {
   // const { name, cover, price, colors, status, priceSale } = product;
   const [dense, setDense] = React.useState(false);
-  const { name, cover, tasks, status } = product;
+  const { name, cover, tasks, status, id } = product;
   function generate(element) {
     return [0, 1, 2].map((value) =>
       React.cloneElement(element, {
@@ -75,20 +75,23 @@ export default function ShopProductCard({ product, open, handleClickOpen, handle
             {status}
           </Label>
         )}
-        <StyledProductImg
-          alt={name}
-          src={cover}
-          onClick={handleClickOpen}
-          style={{
-            cursor: 'pointer',
-          }}
-        />
+        <Link href={`/dashboard/task-list/${id}/tasks`}>
+          <StyledProductImg
+            alt={name}
+            src={cover ?? 'https://cdn-icons-png.flaticon.com/512/2387/2387679.png'}
+            // onClick={handleClickOpen}
+            style={{
+              cursor: 'pointer',
+            }}
+          />
+        </Link>
       </Box>
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link
           color="inherit"
           underline="hover"
-          onClick={handleClickOpen}
+          href={`/dashboard/task-list/${id}/tasks`}
+          // onClick={handleClickOpen}
           style={{
             cursor: 'pointer',
           }}

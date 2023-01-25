@@ -34,7 +34,9 @@ export default function FormDialog({ small, action, title, formInputList, handle
         <>
           <Button
             variant="contained"
-            startIcon={action === 'add' ? <Iconify icon="eva:plus-fill" /> : <Iconify icon="eva:plus-fill" />}
+            startIcon={
+              action === 'add' ? <Iconify icon="eva:plus-fill" /> : <Iconify icon="eva:radio-button-on-fill" />
+            }
             onClick={handleClickOpen}
           >
             {title}
@@ -42,16 +44,21 @@ export default function FormDialog({ small, action, title, formInputList, handle
         </>
       )}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add Task</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText>To add a Task, please enter your details here.</DialogContentText>
+          <DialogContentText>{title}, please enter your details here.</DialogContentText>
           {formInputList?.map((input) =>
             input.type === 'select' ? (
-              <>
+              <div
+                style={{
+                  marginTop: '10px',
+                }}
+              >
                 <InputLabel id="demo-simple-select-label">{input.label}</InputLabel>
                 <Select
                   labelId="demo-select-small"
                   id="demo-select-small"
+                  defaultValue={input?.value}
                   value={form?.status}
                   label={input.label}
                   name={input?.title}
@@ -63,13 +70,15 @@ export default function FormDialog({ small, action, title, formInputList, handle
                     </MenuItem>
                   ))}
                 </Select>
-              </>
+              </div>
             ) : input.type === 'text' || input.type === 'datetime-local' ? (
               <TextField
                 key={input?.key}
                 autoFocus
                 margin="dense"
-                defaultValue={input.type === 'datetime-local' ? '2023-01-01T10:30' : ''}
+                defaultValue={
+                  input.type === 'datetime-local' ? input?.value ?? new Date().toLocaleString() : input?.value ?? ''
+                }
                 id={input?.title}
                 label={input?.label}
                 type={input?.type}

@@ -1,7 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import React, { useState } from 'react';
 // @mui
-import { Button, Container, Stack, Typography } from '@mui/material';
+import { Alert, Button, Container, Snackbar, Stack, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useCreateTaskList, useTaskLists } from '../hooks/api/task.lists.api';
 import FormDialog from '../components/formDialog/FormDialog';
 // components
 import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
@@ -12,6 +15,14 @@ import Iconify from '../components/iconify';
 // ----------------------------------------------------------------------
 
 export default function ProductsPage() {
+  const navigate = useNavigate();
+
+  // Calling Data From Backend
+  const taskListsQuery = useTaskLists();
+  const taskListsDetails = taskListsQuery?.data?.result;
+
+  const createTaskListQuery = useCreateTaskList();
+
   const [openFilter, setOpenFilter] = useState(false);
 
   const handleOpenFilter = () => {
@@ -56,41 +67,38 @@ export default function ProductsPage() {
       label: 'Name',
       type: 'text',
     },
-    {
-      key: 'description1',
-      title: 'description',
-      label: 'Description',
-      type: 'text',
-    },
-    {
-      key: 'due_date1',
-      title: 'due_date',
-      label: 'Due date',
-      type: 'datetime-local',
-    },
+    // {
+    //   key: 'description1',
+    //   title: 'description',
+    //   label: 'Description',
+    //   type: 'text',
+    // },
+    // {
+    //   key: 'due_date1',
+    //   title: 'due_date',
+    //   label: 'Due date',
+    //   type: 'datetime-local',
+    // },
     {
       key: 'status1',
       title: 'status',
       label: 'Status',
       type: 'select',
-      list: ['Select', 'In Progress', 'Completed', 'Pending'],
+      list: ['Select', 'completed', 'pending'],
     },
-    {
-      key: 'task_list_id1',
-      title: 'task_list_id',
-      label: 'Task list',
-      type: 'node',
-      node: 'task_list',
-    },
+    // {
+    //   key: 'task_list_id1',
+    //   title: 'task_list_id',
+    //   label: 'Task list',
+    //   type: 'node',
+    //   node: 'task_list',
+    // },
     // { title: 'user_id', label:'user_id',type: 'select', node:'users'},
   ];
 
   const [form, setForm] = useState({
     name: '',
-    description: '',
-    due_date: '',
     status: 'Select',
-    task_list_id: '',
     user_id: 1,
   });
 
@@ -103,18 +111,18 @@ export default function ProductsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log(form);
-      console.log('success');
+      createTaskListQuery.mutateAsync(form);
+      setOpenToast(true);
     } catch (error) {
       console.log(error);
     }
   };
 
   const [open, setOpen] = React.useState(false);
+  const [openToast, setOpenToast] = React.useState(false);
 
   const handleClickOpen = () => {
     // setOpen(true);
-    window.location.href='/dashboard/task';
   };
 
   const handleClose = () => {
@@ -123,6 +131,11 @@ export default function ProductsPage() {
 
   return (
     <>
+      <Snackbar open={openToast} autoHideDuration={6000} onClose={() => setOpenToast(false)}>
+        <Alert onClose={() => setOpenToast(false)} severity="success" sx={{ width: '100%' }}>
+          Success
+        </Alert>
+      </Snackbar>
       <Container>
         <Typography
           variant="h4"
@@ -165,7 +178,14 @@ export default function ProductsPage() {
             <ProductSort />
           </Stack>
         </Stack>
-        <ProductList products={tasksList} open={open} handleClickOpen={handleClickOpen} handleClose={handleClose} />{' '}
+        {taskListsDetails && (
+          <ProductList
+            products={taskListsDetails}
+            open={open}
+            handleClickOpen={handleClickOpen}
+            handleClose={handleClose}
+          />
+        )}
         {/* <ProductCartWidget /> */}
       </Container>
     </>
