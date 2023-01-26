@@ -2,7 +2,8 @@ import { useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { useAuthDispatch } from '../../../stores/auth.store';
 // mocks_
 import account from '../../../_mock/account';
 
@@ -12,12 +13,12 @@ const MENU_OPTIONS = [
   {
     label: 'Home',
     icon: 'eva:home-fill',
-    path:'/dashboard'
+    path: '/dashboard',
   },
   {
     label: 'Profile',
     icon: 'eva:person-fill',
-    path:'/dashboard/profile'
+    path: '/profile',
   },
   // {
   //   label: 'Settings',
@@ -28,8 +29,10 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const authStore = JSON.parse(localStorage.getItem('auth'));
   const [open, setOpen] = useState(null);
   const navigate = useNavigate();
+  const authDispatch = useAuthDispatch();
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -39,11 +42,13 @@ export default function AccountPopover() {
     setOpen(null);
   };
   const handleLogout = () => {
-    navigate("/login");
+    authDispatch({
+      type: 'REMOVE_LOGGED_IN_USER',
+    });
+    navigate('/login');
   };
 
-    const handleNavigation = (path) => {
-    // window.location.href = "/dashboard/profile";
+  const handleNavigation = (path) => {
     navigate(path);
   };
 
@@ -90,10 +95,10 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {account.displayName}
+            {authStore?.name}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+            {authStore?.email}
           </Typography>
         </Box>
 

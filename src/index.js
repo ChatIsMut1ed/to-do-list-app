@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
+import { AuthProvider } from './stores/auth.store';
 
 // ----------------------------------------------------------------------
 const queryClient = new QueryClient({
@@ -27,7 +28,9 @@ root.render(
   <HelmetProvider>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>
   </HelmetProvider>

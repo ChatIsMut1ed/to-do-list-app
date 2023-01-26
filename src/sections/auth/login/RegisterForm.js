@@ -1,31 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // @mui
-import {
-  Link,
-  Stack,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Checkbox,
-  Snackbar,
-  Alert,
-  Typography,
-} from '@mui/material';
+import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
-import { useLoginUser } from '../../../hooks/api/auth.api';
 import Iconify from '../../../components/iconify';
 import { useAuthDispatch } from '../../../stores/auth.store';
 
 // ----------------------------------------------------------------------
 
-export default function LoginForm() {
-  const loginUserQuery = useLoginUser();
+export default function RegisterForm() {
   const navigate = useNavigate();
-
-  const [openToast, setOpenToast] = useState(false);
-  const [requestResponse, setRequestResponse] = useState({});
+  const authDispatch = useAuthDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [form, setForm] = useState({
@@ -41,14 +27,27 @@ export default function LoginForm() {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
-    const requestResponse = await loginUserQuery.mutateAsync(form);
-    console.log(requestResponse);
-    if (requestResponse?.status === 'failed') {
-      setErrorMessage(requestResponse?.result);
-    } else {
-      setOpenToast(true);
+    try {
+      // createTaskListQuery.mutateAsync(form);
+      // setOpenToast(true);
+      console.log('success');
+      authDispatch({
+        type: 'ADD_LOGGED_IN_USER',
+        loggedInUser: {
+          isLoggedIn: true,
+          // user: requestResponse.response,
+        },
+      });
+      localStorage.setItem(
+        'auth_details',
+        JSON.stringify({
+          isLoggedIn: true,
+          // user: requestResponse.response,
+        })
+      );
       navigate('/dashboard/app', { replace: true });
+    } catch (error) {
+      console.log(error);
     }
   };
   const handleClick = () => {
@@ -57,24 +56,6 @@ export default function LoginForm() {
 
   return (
     <>
-      <Snackbar open={openToast} autoHideDuration={6000} onClose={() => setOpenToast(false)}>
-        <Alert onClose={() => setOpenToast(false)} severity="success" sx={{ width: '100%' }}>
-          Success
-        </Alert>
-      </Snackbar>
-      {errorMessage && (
-        <Typography
-          variant="h6"
-          gutterBottom
-          style={{
-            color: 'red',
-            textAlign: 'center',
-            marginBottom: '25px',
-          }}
-        >
-          {errorMessage}
-        </Typography>
-      )}
       <Stack spacing={3}>
         <TextField name="email" label="Email address" value={form.email} onChange={handleFormChange} />
 
@@ -103,7 +84,7 @@ export default function LoginForm() {
         </Link>
       </Stack> */}
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleSubmit}>
+      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
         Login
       </LoadingButton>
     </>

@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 // @mui
-import { Grid, Button, Container, Stack, Typography } from '@mui/material';
+import { Grid, Button, Container, Stack, Typography, Avatar, Chip, Box, Divider } from '@mui/material';
 // components
 import { useState } from 'react';
 import FormDialog from '../components/formDialog/FormDialog';
@@ -8,6 +8,7 @@ import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
 // mock
 import POSTS from '../_mock/blog';
+import ProfileForm from '../sections/auth/login/ProfileForm';
 
 // ----------------------------------------------------------------------
 
@@ -15,61 +16,60 @@ const SORT_OPTIONS = [
   // { value: 'latest', label: 'Latest' },
   // { value: 'popular', label: 'Popular' },
   // { value: 'oldest', label: 'Oldest' },
-    { value: 'complete', label: 'Complete' },
+  { value: 'complete', label: 'Complete' },
   { value: 'In Progress', label: 'In Progress' },
-  { value: 'Pending', label: 'Pending' }
+  { value: 'Pending', label: 'Pending' },
 ];
 
 const tasksList1 = [
-    {
-      id: 'qsdqd1321',
-      cover: `/assets/images/covers/cover_1.jpg`,
-      title: 'task1',
-      createdAt: '02/02/2023',
-      view: '200',
-      comment: '213',
-      share: '500',
-      favorite: '500',
-      author: {
-        name: 'user1',
-        avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-      },
+  {
+    id: 'qsdqd1321',
+    cover: `/assets/images/covers/cover_1.jpg`,
+    title: 'task1',
+    createdAt: '02/02/2023',
+    view: '200',
+    comment: '213',
+    share: '500',
+    favorite: '500',
+    author: {
+      name: 'user1',
+      avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
     },
-    {
-      id: 'qsdqd132',
-      cover: `/assets/images/covers/cover_1.jpg`,
-      title: 'task2',
-      createdAt: '02/02/2023',
-      view: '200',
-      comment: '213',
-      share: '500',
-      favorite: '500',
-      author: {
-        name: 'user1',
-        avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-      },
+  },
+  {
+    id: 'qsdqd132',
+    cover: `/assets/images/covers/cover_1.jpg`,
+    title: 'task2',
+    createdAt: '02/02/2023',
+    view: '200',
+    comment: '213',
+    share: '500',
+    favorite: '500',
+    author: {
+      name: 'user1',
+      avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
     },
-    {
-      id: 'qsdqd1323',
-      cover: `/assets/images/covers/cover_1.jpg`,
-      title: 'task3',
-      createdAt: '02/02/2023',
-      view: '200',
-      comment: '213',
-      share: '500',
-      favorite: '500',
-      author: {
-        name: 'user1',
-        avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
-      },
+  },
+  {
+    id: 'qsdqd1323',
+    cover: `/assets/images/covers/cover_1.jpg`,
+    title: 'task3',
+    createdAt: '02/02/2023',
+    view: '200',
+    comment: '213',
+    share: '500',
+    favorite: '500',
+    author: {
+      name: 'user1',
+      avatarUrl: `/assets/images/avatars/avatar_1.jpg`,
     },
-  ];
+  },
+];
 
 // ----------------------------------------------------------------------
 
 export default function Profile() {
-
-    const addFormInputList = [
+  const addFormInputList = [
     {
       key: 'name1',
       title: 'name',
@@ -130,37 +130,63 @@ export default function Profile() {
     }
   };
 
+  const authStore = JSON.parse(localStorage.getItem('auth'));
   return (
     <>
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            List 1
+            Profile
           </Typography>
           {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New Post
           </Button> */}
-          <FormDialog
-            action={'add'}
-            title={'Add Task'}
-            formInputList={addFormInputList}
-            handleChange={handleFormChange}
-            handleSubmit={handleSubmit}
-            form={form}
-          />
         </Stack>
 
-        <Stack mb={5} direction="row" alignItems="center" justifyContent="space-between">
-          <BlogPostsSearch posts={POSTS} />
-          <BlogPostsSort options={SORT_OPTIONS} />
-        </Stack>
-
-  
-
-        <Grid container spacing={3}>
-          {tasksList1.map((post, index) => (
-            <BlogPostCard key={post.id} post={post} index={index} />
-          ))}
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            {/* <Avatar alt="" src="/assets/images/avatars/avatar_default.jpg" /> */}
+            <ProfileForm />
+          </Grid>
+          <Grid item xs={4}>
+            <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Avatar
+                  alt=""
+                  src="/assets/images/avatars/avatar_default.jpg"
+                  style={{
+                    height: '150px',
+                    width: '150px',
+                  }}
+                />
+              </div>
+              <Box sx={{ my: 3, mx: 2 }}>
+                <Grid container alignItems="center">
+                  <Grid item xs>
+                    <Typography gutterBottom variant="h4" component="div">
+                      {authStore?.name}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Typography gutterBottom variant="h6" component="div">
+                      {authStore?.role}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Typography color="text.secondary" variant="body2">
+                  {authStore?.email}
+                </Typography>
+              </Box>
+              {/* <Divider variant="middle" /> */}
+              {/* <Box sx={{ mt: 3, ml: 1, mb: 1 }}></Box> */}
+            </Box>
+          </Grid>
         </Grid>
       </Container>
     </>

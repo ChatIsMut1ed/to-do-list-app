@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import RegisterPage from '../pages/RegisterPage';
 import DashboardLayout from '../layouts/dashboard/DashboardLayout';
 import BlogPage from '../pages/BlogPage';
 import DashboardAppPage from '../pages/DashboardAppPage';
@@ -16,14 +17,15 @@ export default function Content() {
     <Routes>
       <Route element={<GuestRoutes />}>
         <Route element={<LoginPage />} path="/login" />
+        <Route element={<RegisterPage />} path="/register" />
       </Route>
-      <Route element={<DashboardLayout />} path="/dashboard" exact>
+      <Route element={<DashboardLayout />} path="/" exact>
         <Route element={<PrivateRoutes />}>
-          <Route element={<DashboardAppPage />} path="/dashboard/app" />
-          <Route element={<UserPage />} path="/dashboard/dashboard/user" />
-          <Route element={<ProductsPage />} path="/dashboard/task-list" />
-          <Route element={<BlogPage />} path="/dashboard/task-list/:id/tasks" />
-          <Route element={<Profile />} path="/dashboard/profile" />
+          <Route element={<DashboardAppPage />} path="/dashboard" />
+          <Route element={<UserPage />} path="/user" />
+          <Route element={<ProductsPage />} path="/task-list" />
+          <Route element={<BlogPage />} path="/task-list/:id/tasks" />
+          <Route element={<Profile />} path="/profile" />
         </Route>
       </Route>
       <Route element={<Page404 />} path="/404" />

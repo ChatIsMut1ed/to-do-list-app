@@ -75,7 +75,7 @@ export default function ShopProductCard({ product, open, handleClickOpen, handle
             {status}
           </Label>
         )}
-        <Link href={`/dashboard/task-list/${id}/tasks`}>
+        <Link href={`/task-list/${id}/tasks`}>
           <StyledProductImg
             alt={name}
             src={cover ?? 'https://cdn-icons-png.flaticon.com/512/2387/2387679.png'}
@@ -90,7 +90,7 @@ export default function ShopProductCard({ product, open, handleClickOpen, handle
         <Link
           color="inherit"
           underline="hover"
-          href={`/dashboard/task-list/${id}/tasks`}
+          href={`/task-list/${id}/tasks`}
           // onClick={handleClickOpen}
           style={{
             cursor: 'pointer',
