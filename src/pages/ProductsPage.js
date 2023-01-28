@@ -175,7 +175,7 @@ export default function ProductsPage() {
                     onOpenFilter={handleOpenFilter}
                     onCloseFilter={handleCloseFilter}
                   /> */}
-            <ProductSort />
+            {/* <ProductSort /> */}
           </Stack>
         </Stack>
         {taskListsDetails && (

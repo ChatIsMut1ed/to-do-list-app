@@ -48,11 +48,8 @@ export default function LoginForm() {
       setErrorMessage(requestResponse?.result);
     } else {
       setOpenToast(true);
-      navigate('/dashboard/app', { replace: true });
+      navigate('/dashboard', { replace: true });
     }
-  };
-  const handleClick = () => {
-    navigate('/dashboard', { replace: true });
   };
 
   return (
@@ -75,37 +72,45 @@ export default function LoginForm() {
           {errorMessage}
         </Typography>
       )}
-      <Stack spacing={3}>
-        <TextField name="email" label="Email address" value={form.email} onChange={handleFormChange} />
+      <form onSubmit={handleSubmit}>
+        <Stack spacing={3}>
+          <TextField
+            required
+            name="email"
+            label="Email address"
+            type="email"
+            value={form.email}
+            onChange={handleFormChange}
+          />
 
-        <TextField
-          onChange={handleFormChange}
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          value={form.password}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
-
-      {/* <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
+          <TextField
+            onChange={handleFormChange}
+            name="password"
+            label="Password"
+            type={showPassword ? 'text' : 'password'}
+            value={form.password}
+            required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                    <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          {/* <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
         <Checkbox name="remember" label="Remember me" />
         <Link variant="subtitle2" underline="hover">
           Forgot password?
         </Link>
       </Stack> */}
-
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleSubmit}>
-        Login
-      </LoadingButton>
+          <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loginUserQuery?.isLoading}>
+            Login
+          </LoadingButton>
+        </Stack>
+      </form>
     </>
   );
 }

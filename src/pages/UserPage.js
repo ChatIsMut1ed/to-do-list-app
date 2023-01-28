@@ -215,9 +215,9 @@ export default function UserPage() {
 
   return (
     <>
-      {/* <Helmet>
-        <title> User | Minimal UI </title>
-      </Helmet> */}
+      <Helmet>
+        <title> User </title>
+      </Helmet>
       <Snackbar open={openToast} autoHideDuration={6000} onClose={() => setOpenToast(false)}>
         <Alert onClose={() => setOpenToast(false)} severity="success" sx={{ width: '100%' }}>
           {'Success'}
@@ -239,7 +239,7 @@ export default function UserPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          {/* <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} /> */}
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>

@@ -9,9 +9,26 @@ const loginUser = async (values) => {
   return parsed.data;
 };
 
+const signUpUser = async (values) => {
+  const parsed = await axiosClient.post(`sign-up`, values);
+  return parsed.data;
+};
+
 const useLoginUser = (values) => {
   const authDispatch = useAuthDispatch();
   return useMutation(['login-user'], (values) => loginUser(values), {
+    onSuccess: (data) => {
+      authDispatch({
+        type: 'ADD_LOGGED_IN_USER',
+        user: data.result,
+      });
+    },
+  });
+};
+
+const useSignUp = (values) => {
+  const authDispatch = useAuthDispatch();
+  return useMutation(['sign-up-user'], (values) => signUpUser(values), {
     onSuccess: (data) => {
       authDispatch({
         type: 'ADD_LOGGED_IN_USER',
@@ -28,4 +45,4 @@ const updateProfile = async (values) => {
 
 const useUpdateProfile = (values) => useMutation(['update-profile'], (values) => updateProfile(values));
 
-export { useLoginUser, useUpdateProfile };
+export { useLoginUser, useUpdateProfile, useSignUp };
