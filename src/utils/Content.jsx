@@ -19,8 +19,8 @@ export default function Content() {
         <Route element={<LoginPage />} path="/login" />
         <Route element={<RegisterPage />} path="/register" />
       </Route>
-      <Route element={<DashboardLayout />} path="/" exact>
-        <Route element={<PrivateRoutes />}>
+      <Route element={<PrivateRoutes />}>
+        <Route element={<DashboardLayout />} path="/" exact>
           <Route element={<DashboardAppPage />} path="/dashboard" />
           <Route element={<UserPage />} path="/user" />
           <Route element={<ProductsPage />} path="/task-list" />
