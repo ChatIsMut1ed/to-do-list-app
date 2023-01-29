@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import React, { useEffect, useState } from 'react';
 import { alpha, styled } from '@mui/material/styles';
-import { Box, Link, Card, Grid, Avatar, Typography, CardContent } from '@mui/material';
+import { Box, Link, Card, Grid, Avatar, Typography, CardContent, Snackbar, Alert } from '@mui/material';
 import DialogDescription from '../../../components/DialogDescription/DialogDescription';
 import { useEditTask } from '../../../hooks/api/tasks.api';
 // utils
@@ -126,7 +126,6 @@ export default function BlogPostCard({ post, index }) {
     e.preventDefault();
     try {
       editTaskQuery.mutateAsync(form);
-      console.log(form);
       setOpenToast(true);
     } catch (error) {
       console.log(error);
@@ -144,6 +143,11 @@ export default function BlogPostCard({ post, index }) {
 
   return (
     <Grid item xs={12} sm={latestPostLarge ? 3 : 3} md={latestPostLarge ? 3 : 3}>
+      <Snackbar open={openToast} autoHideDuration={6000} onClose={() => setOpenToast(false)}>
+        <Alert onClose={() => setOpenToast(false)} severity="success" sx={{ width: '100%' }}>
+          Success
+        </Alert>
+      </Snackbar>
       <DialogDescription open={open} setOpen={setOpen} data={post} />
 
       <Card sx={{ position: 'relative' }}>

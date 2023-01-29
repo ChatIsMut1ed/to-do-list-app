@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
 // components
+import { useDashboard } from '../hooks/api/tasks.api';
 import Iconify from '../components/iconify';
 // sections
 import {
@@ -22,7 +23,9 @@ import {
 
 export default function DashboardAppPage() {
   const theme = useTheme();
-
+  const dashboardQuery = useDashboard();
+  const dashboardDetails = dashboardQuery?.data?.result;
+  const authStore = JSON.parse(localStorage.getItem('auth'));
   return (
     <>
       <Helmet>
@@ -34,24 +37,100 @@ export default function DashboardAppPage() {
           Hi, Welcome back
         </Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
-          </Grid>
+        {authStore?.role === 'client' && (
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={6}>
+              <AppWidgetSummary
+                title="Task List(s)"
+                total={dashboardDetails?.taksLists}
+                icon={'ant-design:audit-outlined'}
+              />
+            </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
-          </Grid>
+            <Grid item xs={12} sm={6} md={6}>
+              <AppWidgetSummary
+                title="This Week Task(s)"
+                total={dashboardDetails?.thisWeekTasks}
+                color="info"
+                icon={'ant-design:alert-filled'}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={6}>
+              <AppCurrentVisits
+                title="Tasks"
+                chartData={[
+                  { label: 'Total completed tasks', value: dashboardDetails?.completedTasks },
+                  { label: 'Total pending tasks', value: dashboardDetails?.pendingTasks },
+                ]}
+                chartColors={[theme.palette.success.main, theme.palette.error.main]}
+              />
+            </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+            {dashboardDetails && (
+              <Grid item xs={12} md={6} lg={6}>
+                <AppOrderTimeline
+                  title="History"
+                  list={dashboardDetails?.lists.map((list, i) => ({
+                    id: list?.id,
+                    title: list?.name,
+                    type: list?.status === 'completed' ? `order2` : `orderx`,
+                    time: list?.due_date,
+                  }))}
+                />
+              </Grid>
+            )}
           </Grid>
+        )}
 
-          <Grid item xs={12} sm={6} md={3}>
+        {authStore?.role === 'admin' && (
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={6} md={4}>
+              <AppWidgetSummary title="Users" total={dashboardDetails?.users} icon={'ant-design:audit-outlined'} />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <AppWidgetSummary
+                title="Task List(s)"
+                total={dashboardDetails?.lists}
+                icon={'ant-design:aliwangwang-filled'}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={4}>
+              <AppWidgetSummary
+                title="This Week User(s)"
+                total={dashboardDetails?.thisWeekUsers}
+                color="info"
+                icon={'ant-design:aliwangwang-filled'}
+              />
+            </Grid>
+            <Grid item xs={12} md={6} lg={12}>
+              <AppCurrentVisits
+                title="Tasks"
+                chartData={[
+                  { label: 'Total completed tasks', value: dashboardDetails?.completedTasks },
+                  { label: 'Total pending tasks', value: dashboardDetails?.pendingTasks },
+                ]}
+                chartColors={[theme.palette.success.main, theme.palette.error.main]}
+              />
+            </Grid>
+          </Grid>
+        )}
+
+        {/* <Grid item xs={12} sm={6} md={4}>
+            <AppWidgetSummary
+              title="Item Orders"
+              total={dashboardDetails?.taksLists}
+              color="warning"
+              icon={'ant-design:windows-filled'}
+            />
+          </Grid> */}
+
+        {/* <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+        {/* <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Website Visits"
               subheader="(+43%) than last year"
@@ -89,27 +168,9 @@ export default function DashboardAppPage() {
                 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
-              title="Current Visits"
-              chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
-              ]}
-              chartColors={[
-                theme.palette.primary.main,
-                theme.palette.info.main,
-                theme.palette.warning.main,
-                theme.palette.error.main,
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={8}>
+        {/* <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
               title="Conversion Rates"
               subheader="(+43%) than last year"
@@ -126,9 +187,9 @@ export default function DashboardAppPage() {
                 { label: 'United Kingdom', value: 1380 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={4}>
+        {/* <Grid item xs={12} md={6} lg={4}>
             <AppCurrentSubject
               title="Current Subject"
               chartLabels={['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math']}
@@ -139,9 +200,9 @@ export default function DashboardAppPage() {
               ]}
               chartColors={[...Array(6)].map(() => theme.palette.text.secondary)}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+        {/* <Grid item xs={12} md={6} lg={8}>
             <AppNewsUpdate
               title="News Update"
               list={[...Array(5)].map((_, index) => ({
@@ -152,27 +213,9 @@ export default function DashboardAppPage() {
                 postedAt: faker.date.recent(),
               }))}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={4}>
-            <AppOrderTimeline
-              title="Order Timeline"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  '1983, orders, $4220',
-                  '12 Invoices have been paid',
-                  'Order #37745 from September',
-                  'New order placed #XF-2356',
-                  'New order placed #XF-2346',
-                ][index],
-                type: `order${index + 1}`,
-                time: faker.date.past(),
-              }))}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6} lg={4}>
+        {/* <Grid item xs={12} md={6} lg={4}>
             <AppTrafficBySite
               title="Traffic by Site"
               list={[
@@ -198,9 +241,9 @@ export default function DashboardAppPage() {
                 },
               ]}
             />
-          </Grid>
+          </Grid> */}
 
-          <Grid item xs={12} md={6} lg={8}>
+        {/* <Grid item xs={12} md={6} lg={8}>
             <AppTasks
               title="Tasks"
               list={[
@@ -211,8 +254,7 @@ export default function DashboardAppPage() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid>
-        </Grid>
+          </Grid> */}
       </Container>
     </>
   );
