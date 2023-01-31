@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import DialogDescription from '../components/DialogDescription/DialogDescription';
 import { useCreateTask } from '../hooks/api/tasks.api';
-import { useDeleteTasksList, useTasksByList } from '../hooks/api/task.lists.api';
+import { useDeleteTasksList, useTaskList, useTasksByList } from '../hooks/api/task.lists.api';
 import FormDialog from '../components/formDialog/FormDialog';
 import Iconify from '../components/iconify';
 import { BlogPostCard, BlogPostsSort, BlogPostsSearch } from '../sections/@dashboard/blog';
@@ -77,6 +77,8 @@ export default function BlogPage() {
   const { id } = useParams();
 
   const tasksByListQuery = useTasksByList(id);
+  const taskListQuery = useTaskList(id);
+  const taskListDetails = taskListQuery?.data?.result;
   const deleteTasksListQuery = useDeleteTasksList();
   const tasksByListDetails = tasksByListQuery?.data?.result;
 
@@ -157,7 +159,7 @@ export default function BlogPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            List {id}
+            List {taskListDetails?.name}
           </Typography>
           {/* <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             New Post

@@ -33,8 +33,8 @@ export default function ProfileForm() {
 
   const [form, setForm] = useState({
     userId: authStore?.id,
-    email: null,
-    name: null,
+    email: authStore?.email ?? null,
+    name: authStore?.name ?? null,
     confirm_password: null,
   });
 
@@ -48,7 +48,9 @@ export default function ProfileForm() {
     e.preventDefault();
     setErrorMessage('');
 
-    const requestResponse = await updateProfileQuery.mutateAsync(form);
+    const requestResponse = await updateProfileQuery
+      .mutateAsync(form)
+      .catch((data) => setErrorMessage(data.response.data.message));
     if (requestResponse?.status === 'failed') {
       setErrorMessage(requestResponse?.message);
     } else {
@@ -123,8 +125,8 @@ export default function ProfileForm() {
           Forgot password?
         </Link>
       </Stack> */}
-
-        <LoadingButton fullWidth size="large" type="submit" variant="contained">
+        <br />
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={updateProfileQuery?.isLoading}>
           Update Profile
         </LoadingButton>
       </form>

@@ -7,6 +7,11 @@ const fetchTaskLists = async () => {
   return parsed.data;
 };
 
+const fetchTaskList = async (id) => {
+  const parsed = await axiosClient.get(`task-lists/${id}`);
+  return parsed.data;
+};
+
 const fetchTasksByList = async (id) => {
   const parsed = await axiosClient.get(`task-lists/${id}/tasks`);
   return parsed.data;
@@ -26,8 +31,10 @@ const useCreateTaskList = () => useMutation(['create-task-list'], (values) => cr
 
 const useTaskLists = () => useQuery(['task-lists'], () => fetchTaskLists());
 
+const useTaskList = (id) => useQuery(['task-list', id], () => fetchTaskList(id));
+
 const useTasksByList = (id) => useQuery(['create-task-list', id], () => fetchTasksByList(id));
 
 const useDeleteTasksList = (id) => useMutation(['create-task-list'], (id) => fetchDeleteTasksList(id));
 
-export { useCreateTaskList, useTaskLists, useTasksByList, useDeleteTasksList };
+export { useCreateTaskList, useTaskLists, useTasksByList, useDeleteTasksList, useTaskList };
