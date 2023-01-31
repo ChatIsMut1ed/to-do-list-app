@@ -142,7 +142,7 @@ export default function BlogPage() {
     try {
       deleteTasksListQuery.mutateAsync(id);
       setOpenToast(true);
-      navigate('/dashboard/task-list');
+      navigate('/task-list');
     } catch (error) {
       console.log(error);
     }
