@@ -41,8 +41,6 @@ const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  // { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
 
@@ -279,11 +277,11 @@ export default function UserPage() {
 
                           {/* <TableCell align="left">{row?.email_verified_at ? 'Yes' : 'No'}</TableCell> */}
 
-                          <TableCell align="left">
+                          {/* <TableCell align="left">
                             <Label color={(!row?.email_verified_at && 'error') || 'success'}>
                               {row?.email_verified_at ? sentenceCase('active') : sentenceCase('not active')}
                             </Label>
-                          </TableCell>
+                          </TableCell> */}
 
                           <TableCell align="right">
                             <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, row)}>

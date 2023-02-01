@@ -11,6 +11,7 @@ import Profile from '../pages/Profile';
 import UserPage from '../pages/UserPage';
 import GuestRoutes from './GuestRoutes';
 import PrivateRoutes from './PrivateRoutes';
+import RecoverPassword from '../pages/RecoverPassword';
 
 export default function Content() {
   return (
@@ -18,6 +19,7 @@ export default function Content() {
       <Route element={<GuestRoutes />}>
         <Route element={<LoginPage />} path="/login" />
         <Route element={<RegisterPage />} path="/register" />
+        <Route element={<RecoverPassword />} path="/recover-password" />
       </Route>
       <Route element={<PrivateRoutes />}>
         <Route element={<DashboardLayout />} path="/" exact>

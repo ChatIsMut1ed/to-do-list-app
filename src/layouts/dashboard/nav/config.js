@@ -21,6 +21,19 @@ const navConfig =
           icon: icon('ic_user'),
         },
       ]
+    : user?.role === 'client'
+    ? [
+        {
+          title: 'dashboard',
+          path: '/dashboard',
+          icon: icon('ic_analytics'),
+        },
+        {
+          title: 'Task List',
+          path: '/task-list',
+          icon: icon('ic_task'),
+        },
+      ]
     : [
         {
           title: 'dashboard',
