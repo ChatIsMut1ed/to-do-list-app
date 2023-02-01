@@ -7,6 +7,8 @@ const fetchTasks = async () => {
   return parsed.data;
 };
 
+const useTasks = () => useQuery(['tasks'], () => fetchTasks());
+
 const fetchDashboard = async () => {
   const parsed = await axiosClient.get('dashboard');
   return parsed.data;
@@ -30,8 +32,6 @@ const editTask = async (values) => {
 const useEditTask = () => useMutation(['edit-task'], (values) => editTask(values));
 
 const useCreateTask = () => useMutation(['create-task'], (values) => createTask(values));
-
-const useTasks = () => useQuery(['tasks'], () => fetchTasks());
 
 const useDeleteTask = (id) => useMutation(['tasks'], (id) => fetchDeleteTask(id));
 

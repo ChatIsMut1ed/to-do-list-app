@@ -134,7 +134,7 @@ export default function RecoverPasswordForm() {
             <TextField
               required
               name="password"
-              label="Password"
+              label="New Password"
               type="password"
               value={form.password}
               onChange={handleFormChange}

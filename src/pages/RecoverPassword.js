@@ -82,6 +82,7 @@ export default function RecoverPassword() {
                 Login
               </Link>
             </Typography>
+
             <RecoverPasswordForm />
           </StyledContent>
         </Container>
