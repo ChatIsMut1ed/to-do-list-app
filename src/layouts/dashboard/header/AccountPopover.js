@@ -45,7 +45,7 @@ export default function AccountPopover() {
     authDispatch({
       type: 'REMOVE_LOGGED_IN_USER',
     });
-    navigate('/login');
+    window.location.reload();
   };
 
   const handleNavigation = (path) => {

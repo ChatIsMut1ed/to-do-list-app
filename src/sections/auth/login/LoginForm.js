@@ -38,7 +38,7 @@ export default function LoginForm() {
       setErrorMessage(requestResponse?.result);
     } else {
       setOpenToast(true);
-      navigate('/dashboard', { replace: true });
+      navigate('/dashboard');
     }
   };
 

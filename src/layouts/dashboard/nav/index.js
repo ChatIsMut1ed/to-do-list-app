@@ -14,6 +14,7 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
+import SvgColor from '../../../components/svg-color';
 
 // ----------------------------------------------------------------------
 
@@ -35,10 +36,13 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
+  const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+
   const authStore = JSON.parse(localStorage.getItem('auth'));
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
+  const user = JSON.parse(localStorage.getItem('auth'));
 
   useEffect(() => {
     if (openNav) {
@@ -76,7 +80,38 @@ export default function Nav({ openNav, onCloseNav }) {
         </Link>
       </Box>
 
-      <NavSection data={navConfig} />
+      {user?.role === 'admin' && (
+        <NavSection
+          data={[
+            {
+              title: 'dashboard',
+              path: '/dashboard',
+              icon: icon('ic_analytics'),
+            },
+            {
+              title: 'users',
+              path: '/user',
+              icon: icon('ic_user'),
+            },
+          ]}
+        />
+      )}
+      {user?.role === 'client' && (
+        <NavSection
+          data={[
+            {
+              title: 'dashboard',
+              path: '/dashboard',
+              icon: icon('ic_analytics'),
+            },
+            {
+              title: 'Task List',
+              path: '/task-list',
+              icon: icon('ic_task'),
+            },
+          ]}
+        />
+      )}
 
       <Box sx={{ flexGrow: 1 }} />
 
